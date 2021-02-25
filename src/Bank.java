@@ -1,6 +1,9 @@
 import org.joda.money.Money;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +12,7 @@ public class Bank implements BankInterface {
 
     public Bank() throws RemoteException
     {
+        super(); 	// call the parent constructor
     }
 
     public void deposit(int account, Money amount) throws RemoteException, InvalidSession
@@ -33,9 +37,37 @@ public class Bank implements BankInterface {
         return null;
     }
 
+    /**
+     * Main method for the Bank server
+     * @param args
+     * @throws Exception
+     */
     public static void main(String args[]) throws Exception
     {
-// initialise Bank server - see sample code in the notes and online RMI tutorials for details
+        // initialise Bank server - see sample code in the notes and online RMI tutorials for details
+        try
+        {
+            // First reset our Security manager
+            if (System.getSecurityManager() == null) {
+                System.setSecurityManager(new SecurityManager());
+                System.out.println("Security manager set");
+            }
+
+            // Create an instance of the local object
+            BankInterface bank = new Bank();
+            System.out.println("Instance of the Bank server created");
+            BankInterface stub = (BankInterface) UnicastRemoteObject.exportObject(bank, 0);
+
+            // Put the server object into the Registry
+            Registry registry = LocateRegistry.getRegistry();
+            registry.rebind("Bank", stub);
+            System.out.println("Name rebind completed");
+            System.out.println("Server ready for requests!");
+        }
+        catch(Exception exc)
+        {
+            System.out.println("Error in main - " + exc.toString());
+        }
     }
 
     @Override
