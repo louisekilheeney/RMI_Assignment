@@ -1,2 +1,6 @@
-public class InvalidLogin extends Throwable {
+public class InvalidLogin extends Exception {
+    public InvalidLogin(String message)
+    {
+        super(message);
+    }
 }
