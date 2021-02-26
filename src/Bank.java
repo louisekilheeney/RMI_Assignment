@@ -17,7 +17,8 @@ public class Bank implements BankInterface {
         Account[] sampleAccounts = {
                 new Account(123, "Jessica Haugh", "airplane45"),
                 new Account(456, "Cian Aherne", "bluesky36"),
-                new Account(789, "James Callaghan", "cloudy09")
+                new Account(789, "James Callaghan", "cloudy09"),
+                new Account(1011, "Noel O'Connor", "rainfall76")
         };
 
         accounts = new ArrayList<>();
@@ -79,7 +80,7 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession
+    public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession, InvalidTransaction
     {
         Account currentAccount = getAssociatedAccount(accountnum, sessionID);
         currentAccount.deposit(amount);

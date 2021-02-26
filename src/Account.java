@@ -1,11 +1,15 @@
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Account {
     private int accountNumber;
     private String username;
     private String password;
     private Money balance;
+    private List<Transaction> transactions;
 
     public Account(int accountNumber, String username, String password)
     {
@@ -14,18 +18,21 @@ public class Account {
         setPassword(password);
         CurrencyUnit eur = CurrencyUnit.of("EUR");
         balance = Money.of(eur, 0);
+        transactions = new ArrayList<>();
     }
 
-    public void deposit(Money amount) {
+    public void deposit(Money amount) throws InvalidTransaction {
         balance = balance.plus(amount);
+        transactions.add(new Transaction(amount, Transaction.TransactionType.DEPOSIT));
     }
 
-    public void withdraw(Money amount) throws InvalidTransaction{
+    public void withdraw(Money amount) throws InvalidTransaction {
         if(amount.compareTo(balance) > 0) {
             // If the amount is more than the balance
             throw new InvalidTransaction("Not enough funds");
         } else {
             balance = balance.minus(amount);
+            transactions.add(new Transaction(amount, Transaction.TransactionType.WITHDRAWAL));
         }
     }
 
