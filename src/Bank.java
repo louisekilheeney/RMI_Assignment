@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Bank implements BankInterface {
     private List<Account> accounts; // users accounts
-
+    private List<Session> sessions;
 
     public Bank() throws RemoteException
     {
@@ -24,27 +24,6 @@ public class Bank implements BankInterface {
         Collections.addAll(accounts, sampleAccounts);
     }
 
-    public void deposit(int account, Money amount) throws RemoteException, InvalidSession
-    {
-// implementation code
-    }
-
-    public void withdraw(int account, Money amount) throws RemoteException, InvalidSession
-    {
-// implementation code
-    }
-
-    public Money getBalance(int account) throws RemoteException, InvalidSession
-    {
-// implementation code
-        return null;
-    }
-
-    public Statement getStatement(Date from, Date to) throws RemoteException, InvalidSession
-    {
-// implementation code
-        return null;
-    }
 
     /**
      * Main method for the Bank server
@@ -86,6 +65,7 @@ public class Bank implements BankInterface {
             if (username.compareTo(account.getUsername()) == 0) {
                 if (password.compareTo(account.getPassword()) == 0) {
                     Session session = new Session(account);
+                    sessions.add(session);
                     return session.getId();
                 } else {
                     message = "Incorrect password";
@@ -100,7 +80,25 @@ public class Bank implements BankInterface {
     @Override
     public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession
     {
+        // Check does the session exist
+        for (Session session : sessions) {
+            if (session.getId() == sessionID) {
+                // Check is the session active
+                if(session.isActive()) {
+                    // Check does the account number match
+                    if(session.getAccount().getAccountNumber() == accountnum) {
+                        session.getAccount().deposit(amount);
+                    } else {
+                        throw new InvalidSession("Incorrect account number");
+                    }
+                } else {
+                    throw new InvalidSession("Session timed out");
+                }
+            }
+        }
 
+        // If we reach here without finding a session with the matching session ID
+        throw new InvalidSession("Session not found");
     }
 
     @Override
@@ -120,8 +118,6 @@ public class Bank implements BankInterface {
     {
         return null;
     }
-
-
 
 
 }

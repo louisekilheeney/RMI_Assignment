@@ -14,6 +14,10 @@ public class Account {
         balance = Money.parse("EUR 00.00");
     }
 
+    public void deposit(Money amount) {
+        balance = Money.total(balance, amount);
+    }
+
     public int getAccountNumber()
     {
         return accountNumber;
