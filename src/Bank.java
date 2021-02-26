@@ -21,6 +21,7 @@ public class Bank implements BankInterface {
         };
 
         accounts = new ArrayList<>();
+        sessions = new ArrayList<>();
         Collections.addAll(accounts, sampleAccounts);
     }
 
@@ -115,7 +116,8 @@ public class Bank implements BankInterface {
     @Override
     public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession
     {
-        return null;
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        return currentAccount.getBalance();
     }
 
     @Override
