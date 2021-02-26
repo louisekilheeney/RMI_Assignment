@@ -80,6 +80,11 @@ public class Bank implements BankInterface {
     @Override
     public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession
     {
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        currentAccount.deposit(amount);
+    }
+
+    private Account getAssociatedAccount(int accountnum, long sessionID) throws InvalidSession {
         // Check does the session exist
         for (Session session : sessions) {
             if (session.getId() == sessionID) {
@@ -87,7 +92,7 @@ public class Bank implements BankInterface {
                 if(session.isActive()) {
                     // Check does the account number match
                     if(session.getAccount().getAccountNumber() == accountnum) {
-                        session.getAccount().deposit(amount);
+                        return session.getAccount();
                     } else {
                         throw new InvalidSession("Incorrect account number");
                     }
