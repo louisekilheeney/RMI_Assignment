@@ -1,3 +1,4 @@
+import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,11 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServerTest {
     private Bank bank;
+    private CurrencyUnit eur;
 
     @BeforeEach
     public void setUp() {
         try {
             bank = new Bank();
+            eur = CurrencyUnit.of("EUR");
         } catch (Exception e){}
     }
 
@@ -112,6 +115,82 @@ public class ServerTest {
 
                 balance = bank.getBalance(accountnum, sessionID);
                 assertEquals(Money.parse("EUR " + expectedBalance), balance);
+            } catch (Exception e) {
+                throw new AssertionError(e.getMessage());
+            }
+        } catch (Exception e) {
+            throw new AssertionError(e.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName("Testing withdrawals")
+    public void testWithdrawals() {
+        long sessionID;
+        int accountnum = 123;
+
+        // Successful login
+        try{
+            // Assert no exception thrown
+            sessionID = bank.login("Jessica Haugh", "airplane45");
+
+            try{
+                // Assert no exception thrown
+                float expectedBalance = 0.0f;
+                Money balance = bank.getBalance(accountnum, sessionID);
+                assertEquals(Money.of(eur, expectedBalance), balance);
+
+                float amount = 100.00f;
+                expectedBalance += amount;
+                Money changeAmount = Money.of(eur, expectedBalance);
+                bank.deposit(accountnum, changeAmount, sessionID);
+
+                balance = bank.getBalance(accountnum, sessionID);
+                assertEquals(Money.of(eur, expectedBalance), balance);
+
+                // Invalid withdrawal - not enough funds
+                amount = 200.00f;
+                changeAmount = Money.of(eur, amount);
+                try {
+                    bank.withdraw(accountnum, changeAmount, sessionID);
+                } catch (InvalidTransaction e) {
+                    // Expected balance does not change
+                    balance = bank.getBalance(accountnum, sessionID);
+                    assertEquals(Money.of(eur, expectedBalance), balance);
+                    assertEquals("Not enough funds", e.getMessage());
+                }
+
+                // Valid withdrawal
+                amount = 50.00f;
+                expectedBalance -= amount;
+                changeAmount = Money.of(eur, amount);
+                bank.withdraw(accountnum, changeAmount, sessionID);
+
+                // Expected balance does not change
+                balance = bank.getBalance(accountnum, sessionID);
+                assertEquals(Money.of(eur, expectedBalance), balance);
+
+                // Valid withdrawal
+                amount = 50.00f;
+                expectedBalance -= amount;
+                changeAmount = Money.of(eur, amount);
+                bank.withdraw(accountnum, changeAmount, sessionID);
+
+                // Expected balance does not change
+                balance = bank.getBalance(accountnum, sessionID);
+                assertEquals(Money.of(eur, expectedBalance), balance);
+
+                // Invalid withdrawal - not enough funds
+                amount = 50.00f;
+                changeAmount = Money.of(eur, amount);
+                try {
+                    bank.withdraw(accountnum, changeAmount, sessionID);
+                } catch (InvalidTransaction e){
+                    // Expected balance does not change
+                    balance = bank.getBalance(accountnum, sessionID);
+                    assertEquals(Money.of(eur, expectedBalance), balance);
+                    assertEquals("Not enough funds", e.getMessage());
+                }
             } catch (Exception e) {
                 throw new AssertionError(e.getMessage());
             }

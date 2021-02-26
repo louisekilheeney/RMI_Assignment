@@ -1,3 +1,4 @@
+import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 public class Account {
@@ -11,11 +12,21 @@ public class Account {
         setAccountNumber(accountNumber);
         setUsername(username);
         setPassword(password);
-        balance = Money.parse("EUR 00.00");
+        CurrencyUnit eur = CurrencyUnit.of("EUR");
+        balance = Money.of(eur, 0);
     }
 
     public void deposit(Money amount) {
-        balance = Money.total(balance, amount);
+        balance = balance.plus(amount);
+    }
+
+    public void withdraw(Money amount) throws InvalidTransaction{
+        if(amount.compareTo(balance) > 0) {
+            // If the amount is more than the balance
+            throw new InvalidTransaction("Not enough funds");
+        } else {
+            balance = balance.minus(amount);
+        }
     }
 
     public int getAccountNumber()

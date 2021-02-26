@@ -108,9 +108,10 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession
+    public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        currentAccount.withdraw(amount);
     }
 
     @Override

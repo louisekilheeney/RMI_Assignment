@@ -14,7 +14,7 @@ public class Session {
         setId((long) Math.random());
         timer = new Timer();
         setActive(true);
-        timer.schedule(new EndSessionTask(), SESSION_LENGTH);
+        timer.schedule(new EndSessionTask(), SESSION_LENGTH * 1000);
     }
 
     class EndSessionTask extends TimerTask {
