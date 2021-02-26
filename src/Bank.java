@@ -123,10 +123,9 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public Statement getStatement(Date from, Date to, long sessionID) throws RemoteException, InvalidSession
+    public Statement getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-        return null;
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        return new AccountStatement(from, to, currentAccount);
     }
-
-
 }

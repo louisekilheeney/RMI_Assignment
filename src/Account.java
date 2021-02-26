@@ -75,4 +75,14 @@ public class Account {
     {
         this.balance = balance;
     }
+
+    public List<Transaction> getTransactions()
+    {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions)
+    {
+        this.transactions = transactions;
+    }
 }

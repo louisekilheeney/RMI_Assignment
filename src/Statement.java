@@ -9,7 +9,7 @@ public interface Statement extends Serializable {
 
     public Date getEndDate(); // returns end Date of Statement
 
-    public String getAccoutName(); // returns name of account holder
+    public String getAccountName(); // returns name of account holder
 
     public List<Transaction> getTransactions(); // return list of transactions included in this statement
 }
