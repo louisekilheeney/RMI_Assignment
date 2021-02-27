@@ -5,7 +5,7 @@ public class Session {
     private long id;
     private Timer timer;
     private Account account;
-    private static int SESSION_LENGTH = 300;
+    private static final int SESSION_LENGTH = 300;
     private boolean isActive;
 
     public Session(Account account)

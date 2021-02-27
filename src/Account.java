@@ -10,6 +10,7 @@ public class Account {
     private String password;
     private Money balance;
     private List<Transaction> transactions;
+    private Session session;
 
     public Account(int accountNumber, String username, String password)
     {
