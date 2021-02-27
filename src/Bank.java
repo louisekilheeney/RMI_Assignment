@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Bank implements BankInterface {
     private List<Account> accounts; // users accounts
-
+    private List<Session> sessions;
 
     public Bank() throws RemoteException
     {
@@ -17,34 +17,15 @@ public class Bank implements BankInterface {
         Account[] sampleAccounts = {
                 new Account(123, "Jessica Haugh", "airplane45"),
                 new Account(456, "Cian Aherne", "bluesky36"),
-                new Account(789, "James Callaghan", "cloudy09")
+                new Account(789, "James Callaghan", "cloudy09"),
+                new Account(1011, "Noel O'Connor", "rainfall76")
         };
 
         accounts = new ArrayList<>();
+        sessions = new ArrayList<>();
         Collections.addAll(accounts, sampleAccounts);
     }
 
-    public void deposit(int account, Money amount) throws RemoteException, InvalidSession
-    {
-// implementation code
-    }
-
-    public void withdraw(int account, Money amount) throws RemoteException, InvalidSession
-    {
-// implementation code
-    }
-
-    public Money getBalance(int account) throws RemoteException, InvalidSession
-    {
-// implementation code
-        return null;
-    }
-
-    public Statement getStatement(Date from, Date to) throws RemoteException, InvalidSession
-    {
-// implementation code
-        return null;
-    }
 
     /**
      * Main method for the Bank server
@@ -86,6 +67,7 @@ public class Bank implements BankInterface {
             if (username.compareTo(account.getUsername()) == 0) {
                 if (password.compareTo(account.getPassword()) == 0) {
                     Session session = new Session(account);
+                    sessions.add(session);
                     return session.getId();
                 } else {
                     message = "Incorrect password";
@@ -98,30 +80,52 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession
+    public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession, InvalidTransaction
     {
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        currentAccount.deposit(amount);
+    }
 
+    private Account getAssociatedAccount(int accountnum, long sessionID) throws InvalidSession {
+        // Check does the session exist
+        for (Session session : sessions) {
+            if (session.getId() == sessionID) {
+                // Check is the session active
+                if(session.isActive()) {
+                    // Check does the account number match
+                    if(session.getAccount().getAccountNumber() == accountnum) {
+                        return session.getAccount();
+                    } else {
+                        throw new InvalidSession("Incorrect account number");
+                    }
+                } else {
+                    throw new InvalidSession("Session timed out");
+                }
+            }
+        }
+
+        // If we reach here without finding a session with the matching session ID
+        throw new InvalidSession("Session not found");
     }
 
     @Override
-    public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession
+    public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        currentAccount.withdraw(amount);
     }
 
     @Override
     public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession
     {
-        return null;
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        return currentAccount.getBalance();
     }
 
     @Override
-    public Statement getStatement(Date from, Date to, long sessionID) throws RemoteException, InvalidSession
+    public Statement getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-        return null;
+        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        return new AccountStatement(from, to, currentAccount);
     }
-
-
-
-
 }

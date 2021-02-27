@@ -1,2 +1,2 @@
-public class RemoteExcept extends Throwable {
+public class RemoteExcept extends Exception {
 }
