@@ -67,7 +67,7 @@ public class ATM {
                 System.out.println(e.getMessage());
             }
         }
-        this.accNumber = bankServer.getAccountNum;
+        this.accNumber = bankServer.getAccountNumber(this.sessionId);
         this.sessionId = sessionId;
     }
 
@@ -98,7 +98,7 @@ public class ATM {
                     break;
                 case "statement":
                 case "s":
-                    this.statment();
+                    this.statement();
                     break;
 
                 case "logout":
@@ -136,7 +136,7 @@ public class ATM {
             bankServer.deposit(this.accNumber, amountToDeposit, this.sessionId);
             System.out.println("Successfully deposited €" + amountToDeposit + " into account" + this.accNumber);
 
-        } catch (InvalidTransaction e) {
+        } catch (InvalidTransaction | RemoteExcept | InvalidSession e) {
             System.out.println(e.getMessage());
             System.out.println("Returning to main menu");
             return;
@@ -145,8 +145,8 @@ public class ATM {
 
     private void balance() {
         try {
-            bankServer.getBalance(this.accNumber, this.sessionId);
-            System.out.println("The current balance of account" + this.accNumber + "is " + amount);
+            Money balance = bankServer.getBalance(this.accNumber, this.sessionId);
+            System.out.println("The current balance of account" + this.accNumber + "is " + balance.toString());
         } catch (InvalidSession | RemoteException e) {
             System.out.println(e.getMessage());
             System.out.println("Returning to main menu");
@@ -154,7 +154,7 @@ public class ATM {
         }
     }
 
-    private void statment() {
+    private void statement() {
         try {
             System.out.print("Please Enter startDate: ");
             String startDate = sc.nextLine();

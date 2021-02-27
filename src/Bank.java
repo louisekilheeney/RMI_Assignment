@@ -129,4 +129,18 @@ public class Bank implements BankInterface {
         return new AccountStatement(from, to, currentAccount);
     }
 
+    public int getAccountNumber(Long sessionID){
+        for (Session session : sessions) {
+            if (session.getId() == sessionID) {
+                // Check is the session active
+                if (session.isActive()) {
+                    // Check does the account number match
+                    return session.getAccount().getAccountNumber();
+                }
+            }
+        }
+
+        return -1;
+    }
+
 }
