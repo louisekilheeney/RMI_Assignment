@@ -1,5 +1,5 @@
-import org.joda.money.Money;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -80,7 +80,7 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void deposit(int accountnum, Money amount, long sessionID) throws RemoteExcept, InvalidSession, InvalidTransaction
+    public void deposit(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
         Account currentAccount = getAssociatedAccount(accountnum, sessionID);
         currentAccount.deposit(amount);
@@ -109,14 +109,14 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
+    public void withdraw(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
         Account currentAccount = getAssociatedAccount(accountnum, sessionID);
         currentAccount.withdraw(amount);
     }
 
     @Override
-    public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession
+    public BigDecimal getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession
     {
         Account currentAccount = getAssociatedAccount(accountnum, sessionID);
         return currentAccount.getBalance();
