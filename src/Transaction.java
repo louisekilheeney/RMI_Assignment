@@ -1,6 +1,6 @@
-import org.joda.money.Money;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -8,12 +8,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Transaction implements Serializable {
-    private Money amount;
+    private BigDecimal amount;
     private Date date;
     private String description;
     public enum TransactionType {DEPOSIT, WITHDRAWAL}
 
-    public Transaction(Money amount, TransactionType transactionType) throws InvalidTransaction
+    public Transaction(BigDecimal amount, TransactionType transactionType) throws InvalidTransaction
     {
         if(transactionType == null) {
             throw new InvalidTransaction("Unknown transaction type");
@@ -28,7 +28,7 @@ public class Transaction implements Serializable {
         }
     }
 
-    public Money getAmount()
+    public BigDecimal getAmount()
     {
         return amount;
     }
@@ -38,7 +38,7 @@ public class Transaction implements Serializable {
         return date;
     }
 
-    public void setAmount(Money amount)
+    public void setAmount(BigDecimal amount)
     {
         this.amount = amount;
     }

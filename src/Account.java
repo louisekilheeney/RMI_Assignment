@@ -1,6 +1,6 @@
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
 
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +8,7 @@ public class Account {
     private int accountNumber;
     private String username;
     private String password;
-    private Money balance;
+    private BigDecimal balance;
     private List<Transaction> transactions;
     private Session session;
 
@@ -17,22 +17,21 @@ public class Account {
         setAccountNumber(accountNumber);
         setUsername(username);
         setPassword(password);
-        CurrencyUnit eur = CurrencyUnit.of("EUR");
-        balance = Money.of(eur, 0);
+        balance = new BigDecimal(0);
         transactions = new ArrayList<>();
     }
 
-    public void deposit(Money amount) throws InvalidTransaction {
-        balance = balance.plus(amount);
+    public void deposit(BigDecimal amount) throws InvalidTransaction {
+        balance = balance.add(amount);
         transactions.add(new Transaction(amount, Transaction.TransactionType.DEPOSIT));
     }
 
-    public void withdraw(Money amount) throws InvalidTransaction {
+    public void withdraw(BigDecimal amount) throws InvalidTransaction {
         if(amount.compareTo(balance) > 0) {
             // If the amount is more than the balance
             throw new InvalidTransaction("Not enough funds");
         } else {
-            balance = balance.minus(amount);
+            balance = balance.subtract(amount);
             transactions.add(new Transaction(amount, Transaction.TransactionType.WITHDRAWAL));
         }
     }
@@ -67,12 +66,12 @@ public class Account {
         this.password = password;
     }
 
-    public Money getBalance()
+    public BigDecimal getBalance()
     {
         return balance;
     }
 
-    public void setBalance(Money balance)
+    public void setBalance(BigDecimal balance)
     {
         this.balance = balance;
     }

@@ -1,5 +1,5 @@
-import org.joda.money.Money;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -116,8 +116,9 @@ public class ATM {
     private void withdraw() {
         try {
             System.out.print("Enter amount to withdraw: ");
-            String amount = this.sc.next();
-            Money amountToWithdraw = Money.parse("EUR " + amount);
+            String amountStr = this.sc.next();
+            double amountValue = Double.parseDouble(amountStr);
+            BigDecimal amountToWithdraw = new BigDecimal(amountValue);
             bankServer.withdraw(this.accNumber, amountToWithdraw, this.sessionId);
             System.out.println("Successfully withdrew €" + amountToWithdraw + " from account" + accNumber);
 
@@ -131,8 +132,9 @@ public class ATM {
     private void deposit() {
         try {
             System.out.print("Please Enter deposit account: ");
-            String deposit = sc.next();
-            Money amountToDeposit = Money.parse("EUR " + deposit);
+            String depositStr = sc.next();
+            double depostitValue = Double.parseDouble(depositStr);
+            BigDecimal amountToDeposit = new BigDecimal(depostitValue);
             bankServer.deposit(this.accNumber, amountToDeposit, this.sessionId);
             System.out.println("Successfully deposited €" + amountToDeposit + " into account" + this.accNumber);
 
@@ -145,7 +147,7 @@ public class ATM {
 
     private void balance() {
         try {
-            Money balance = bankServer.getBalance(this.accNumber, this.sessionId);
+            BigDecimal balance = bankServer.getBalance(this.accNumber, this.sessionId);
             System.out.println("The current balance of account" + this.accNumber + "is " + balance.toString());
         } catch (InvalidSession | RemoteException e) {
             System.out.println(e.getMessage());
