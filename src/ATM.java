@@ -27,8 +27,11 @@ public class ATM {
         }
         try {
             Registry registry = LocateRegistry.getRegistry(registryport);
-            bankServer = (Bank) registry.lookup("//localhost/Bank");
+            System.out.print("Got it");
+            bankServer = (Bank) registry.lookup("Bank");
+            System.out.print("Got the bank too");
             atm = new ATM(bankServer);
+            System.out.print("Got the atm too");
         } catch (Exception e) {
             System.err.println("ATM exception:");
             e.printStackTrace();
@@ -138,7 +141,7 @@ public class ATM {
             bankServer.deposit(this.accNumber, amountToDeposit, this.sessionId);
             System.out.println("Successfully deposited €" + amountToDeposit + " into account" + this.accNumber);
 
-        } catch (InvalidTransaction | RemoteExcept | InvalidSession e) {
+        } catch (InvalidTransaction | RemoteException | InvalidSession e) {
             System.out.println(e.getMessage());
             System.out.println("Returning to main menu");
             return;

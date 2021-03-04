@@ -80,7 +80,7 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public void deposit(int accountnum, BigDecimal amount, long sessionID) throws RemoteExcept, InvalidSession, InvalidTransaction
+    public void deposit(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
         Account currentAccount = getAssociatedAccount(accountnum, sessionID);
         currentAccount.deposit(amount);
