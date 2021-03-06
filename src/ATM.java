@@ -46,7 +46,7 @@ public class ATM {
 
     }
 
-    private Long sessionId;
+    private long sessionId;
     private BankInterface bankServer;
     private Scanner sc;
     private int accNumber;
@@ -84,7 +84,7 @@ public class ATM {
     }
 
     private void logout(){
-        this.sessionId = null;
+        this.sessionId = -1L;
     }
 
     private void atmActions() {
@@ -178,9 +178,9 @@ public class ATM {
             String endDate = sc.next();
             Date end=new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
 
-            bankServer.getStatement(this.accNumber, start, end, this.sessionId);
+            Statement statement = bankServer.getStatement(this.accNumber, start, end, this.sessionId);
             System.out.println("The statement for account" + this.accNumber + " for the period " + start + " to " + end);
-
+            System.out.println(statement.toString());
 
         } catch (InvalidTransaction | ParseException | RemoteException | InvalidSession e) {
             System.out.println(e.getMessage());
