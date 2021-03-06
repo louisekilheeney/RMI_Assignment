@@ -1,1 +1,1 @@
-rmiregistry -J-Djava.rmi.server.codebase=file:C:\\Users\\Ethan\\IdeaProjects\\RMI_Assignment\\src
+rmiregistry -J-Djava.rmi.server.codebase=file:C:\\Users\\Louise\\Desktop\\AssigmentOne\\src

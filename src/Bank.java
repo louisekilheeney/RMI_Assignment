@@ -15,15 +15,16 @@ public class Bank implements BankInterface {
         super();    // call the parent constructor
 
         Account[] sampleAccounts = {
-                new Account(123, "Jessica Haugh", "airplane45"),
-                new Account(456, "Cian Aherne", "bluesky36"),
-                new Account(789, "James Callaghan", "cloudy09"),
-                new Account(1011, "Noel O'Connor", "rainfall76")
+                new Account(123, "jeshaugh", "airplane45"),
+                new Account(456, "ciaherne", "bluesky36"),
+                new Account(789, "jacallaghan", "cloudy09"),
+                new Account(1011, "neoconnor", "rainfall76")
         };
 
         accounts = new ArrayList<>();
         sessions = new ArrayList<>();
         Collections.addAll(accounts, sampleAccounts);
+        System.out.println("accounts" +accounts.get(0).getUsername());
     }
 
 
@@ -129,7 +130,8 @@ public class Bank implements BankInterface {
         return new AccountStatement(from, to, currentAccount);
     }
 
-    public int getAccountNumber(Long sessionID){
+    @Override
+    public int getAccountNumber(long sessionID) throws RemoteException{
         for (Session session : sessions) {
             if (session.getId() == sessionID) {
                 // Check is the session active

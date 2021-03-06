@@ -1,1 +1,1 @@
-java -cp C:\\Users\\Ethan\\IdeaProjects\\RMI_Assignment\\src -Djava.rmi.server.codebase=file:C:\\Users\\Ethan\\IdeaProjects\\RMI_Assignment\\src -Djava.security.policy=server.policy Bank 20345
+java -cp C:\\Users\\Louise\\Desktop\\AssigmentOne\\src -Djava.rmi.server.codebase=file:C:\\Users\\Louise\\Desktop\\AssigmentOne\\src -Djava.security.policy=server.policy Bank 20345

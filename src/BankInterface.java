@@ -15,4 +15,6 @@ public interface BankInterface extends Remote {
     public BigDecimal getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession;
 
     public Statement getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction;
+
+    public int getAccountNumber(long sessionID) throws RemoteException;
 }
