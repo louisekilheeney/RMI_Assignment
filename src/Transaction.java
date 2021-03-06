@@ -2,6 +2,7 @@
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,18 +12,19 @@ public class Transaction implements Serializable {
     private BigDecimal amount;
     private Date date;
     private String description;
+
     public enum TransactionType {DEPOSIT, WITHDRAWAL}
 
     public Transaction(BigDecimal amount, TransactionType transactionType) throws InvalidTransaction
     {
-        if(transactionType == null) {
+        if (transactionType == null) {
             throw new InvalidTransaction("Unknown transaction type");
         } else {
             setAmount(amount);
             // Set the date to be the date the transaction was created
             setDate(new Date());
             // Auto-generate description
-            DateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
             String formattedDate = dateFormat.format(date);
             setDescription(transactionType.toString() + "\t" + formattedDate + ": " + amount);
         }
@@ -37,6 +39,14 @@ public class Transaction implements Serializable {
     {
         return date;
     }
+
+    public Date getDateWithoutTime() throws ParseException
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat(
+                "dd/MM/yyyy");
+        return formatter.parse(formatter.format(date));
+    }
+
 
     public void setAmount(BigDecimal amount)
     {

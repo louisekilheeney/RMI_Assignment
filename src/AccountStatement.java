@@ -1,4 +1,5 @@
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -9,6 +10,7 @@ public class AccountStatement implements Statement {
     private String accountName;
     private List<Transaction> transactions;
 
+
     public AccountStatement(Date startDate, Date endDate, Account account) throws InvalidTransaction
     {
         setAccountnum(account.getAccountNumber());
@@ -17,9 +19,13 @@ public class AccountStatement implements Statement {
         setAccountName(account.getUsername());
         transactions = new ArrayList<>();
         for (Transaction transaction : account.getTransactions()) {
-            if (transaction.getDate().compareTo(startDate) >= 0 && transaction.getDate().compareTo(endDate) <= 0) {
-                transactions.add(transaction);
-            } else if (transaction.getDate() == null) {
+            try {
+                if (transaction.getDateWithoutTime().compareTo(startDate) >= 0 && transaction.getDateWithoutTime().compareTo(endDate) <= 0) {
+                    transactions.add(transaction);
+                }
+            } catch (ParseException e) {
+                throw new InvalidTransaction("Invalid transaction found");
+            } catch (NullPointerException e) {
                 throw new InvalidTransaction("Invalid transaction found");
             }
         }
@@ -31,14 +37,14 @@ public class AccountStatement implements Statement {
     @Override
     public String toString()
     {
-        DateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         String output = "Statement for " + accountName
                 + "\nAccount number: " + accountnum
                 + "\nFrom: " + dateFormat.format(startDate)
                 + "\nTo: " + dateFormat.format(endDate);
 
-        for(Transaction transaction : transactions) {
+        for (Transaction transaction : transactions) {
             output += "\n" + transaction.getDescription();
         }
 
