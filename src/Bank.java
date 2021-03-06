@@ -24,7 +24,6 @@ public class Bank implements BankInterface {
         accounts = new ArrayList<>();
         sessions = new ArrayList<>();
         Collections.addAll(accounts, sampleAccounts);
-        System.out.println("accounts" +accounts.get(0).getUsername());
     }
 
 
