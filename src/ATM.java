@@ -28,13 +28,10 @@ public class ATM {
         }
         try {
             Registry registry = LocateRegistry.getRegistry(null);
-            System.out.println("Got it");
             String name = "Bank";
             BankInterface bankServer = (BankInterface) registry.lookup(name);
-            System.out.println("Got the bank too");
 
             atm = new ATM(bankServer);
-            System.out.println("Got the atm too");
         } catch (Exception e) {
             System.err.println("ATM exception: " +e.toString());
             e.printStackTrace();
