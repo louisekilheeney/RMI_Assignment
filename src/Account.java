@@ -1,5 +1,3 @@
-
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +8,6 @@ public class Account {
     private String password;
     private BigDecimal balance;
     private List<Transaction> transactions;
-    private Session session;
 
     public Account(int accountNumber, String username, String password)
     {
@@ -21,14 +18,15 @@ public class Account {
         transactions = new ArrayList<>();
     }
 
-    public void deposit(BigDecimal amount) throws InvalidTransaction {
+    public void deposit(BigDecimal amount) throws InvalidTransaction
+    {
         balance = balance.add(amount);
         transactions.add(new Transaction(amount, Transaction.TransactionType.DEPOSIT));
     }
 
-    public void withdraw(BigDecimal amount) throws InvalidTransaction {
-        if(amount.compareTo(balance) > 0) {
-            // If the amount is more than the balance
+    public void withdraw(BigDecimal amount) throws InvalidTransaction
+    {
+        if (amount.compareTo(balance) > 0) {
             throw new InvalidTransaction("Not enough funds");
         } else {
             balance = balance.subtract(amount);
@@ -71,18 +69,8 @@ public class Account {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance)
-    {
-        this.balance = balance;
-    }
-
     public List<Transaction> getTransactions()
     {
         return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions)
-    {
-        this.transactions = transactions;
     }
 }

@@ -1,11 +1,8 @@
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Transaction implements Serializable {
@@ -42,8 +39,7 @@ public class Transaction implements Serializable {
 
     public Date getDateWithoutTime() throws ParseException
     {
-        SimpleDateFormat formatter = new SimpleDateFormat(
-                "dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.parse(formatter.format(date));
     }
 
