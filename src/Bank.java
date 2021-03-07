@@ -56,32 +56,49 @@ public class Bank implements BankInterface {
     public long login(String username, String password) throws RemoteException, InvalidLogin
     {
         // Iterate through the accounts
+        System.out.println("Login attempt for username: " + username);
         for (Account account : accounts) {
             // Check if the username is there
             if (username.compareTo(account.getUsername()) == 0) {
                 // Check if the password matches
                 if (password.compareTo(account.getPassword()) == 0) {
+                    System.out.println("Login successful:"
+                            + "\nUsername: " + username
+                            + "\nAccount number: " + account.getAccountNumber()
+                    );
+
                     // Create a new session and return the session ID
                     Session session = new Session(account);
                     sessions.add(session);
+
+                    System.out.println("New session (ID = " + session.getId() + ") created. Time left: " + session.getTimeLeft());
+
                     return session.getId();
                 } else {
+                    System.out.println("Login unsuccessful");
                     throw new InvalidLogin("Incorrect password");
                 }
             }
         }
 
+        System.out.println("Login unsuccessful");
         throw new InvalidLogin("Username not found");
     }
 
     @Override
     public void deposit(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        Session currentSession = getAssociatedSession(accountnum, sessionID);
+        Account currentAccount = currentSession.getAccount();
         currentAccount.deposit(amount);
+        System.out.println("Deposit to account " + accountnum + ":"
+                + "\nAmount: €" + amount
+                + "Balance: €" + currentAccount.getBalance()
+                + "Session time left: " + currentSession.getTimeLeft() + " s"
+        );
     }
 
-    private Account getAssociatedAccount(int accountnum, long sessionID) throws InvalidSession
+    private Session getAssociatedSession(int accountnum, long sessionID) throws InvalidSession
     {
         // Check does the session exist
         for (Session session : sessions) {
@@ -90,7 +107,7 @@ public class Bank implements BankInterface {
                 if (session.isActive()) {
                     // Check does the account number match
                     if (session.getAccount().getAccountNumber() == accountnum) {
-                        return session.getAccount();
+                        return session;
                     } else {
                         throw new InvalidSession("Incorrect account number");
                     }
@@ -107,21 +124,38 @@ public class Bank implements BankInterface {
     @Override
     public void withdraw(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        Session currentSession = getAssociatedSession(accountnum, sessionID);
+        Account currentAccount = currentSession.getAccount();
         currentAccount.withdraw(amount);
+        System.out.println("Withdrawal from account " + accountnum + ":"
+                + "\nAmount: €" + amount
+                + "Balance: €" + currentAccount.getBalance()
+                + "Session time left: " + currentSession.getTimeLeft() + " s"
+        );
     }
 
     @Override
     public BigDecimal getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession
     {
-        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        Session currentSession = getAssociatedSession(accountnum, sessionID);
+        Account currentAccount = currentSession.getAccount();
+        System.out.println("Balance request for account " + accountnum + ":"
+                + "Balance: €" + currentAccount.getBalance()
+                + "Session time left: " + currentSession.getTimeLeft() + " s"
+        );
         return currentAccount.getBalance();
     }
 
     @Override
     public Statement getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidSession, InvalidTransaction
     {
-        Account currentAccount = getAssociatedAccount(accountnum, sessionID);
+        Session currentSession = getAssociatedSession(accountnum, sessionID);
+        Account currentAccount = currentSession.getAccount();
+        System.out.println("Statement request for account " + accountnum + ":"
+                + "From: " + from
+                + "To: " + to
+                + "Session time left: " + currentSession.getTimeLeft() + " s"
+        );
         return new AccountStatement(from, to, currentAccount);
     }
 

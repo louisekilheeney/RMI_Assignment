@@ -6,7 +6,9 @@ public class Session {
     private Timer timer;
     private Account account;
     private static final int SESSION_LENGTH = 300; // This is the number of seconds the session should last
+    private static final int UPDATE_TIME = 10; // This is the number of seconds between updates to time left
     private boolean isActive;
+    private int timeLeft;
 
     public Session(Account account)
     {
@@ -20,7 +22,9 @@ public class Session {
         // (* 1000 because the argument is in ms rather than seconds)
         timer = new Timer();
         setActive(true);
+        setTimeLeft(SESSION_LENGTH * 1000);
         timer.schedule(new EndSessionTask(), SESSION_LENGTH * 1000);
+        timer.schedule(new UpdateTimeLeftTask(), UPDATE_TIME * 1000);
     }
 
     // This task is called when the timer ends
@@ -31,6 +35,25 @@ public class Session {
             setActive(false);
             timer.cancel();
         }
+    }
+
+    class UpdateTimeLeftTask extends TimerTask {
+        @Override
+        public void run()
+        {
+            setTimeLeft(timeLeft-(UPDATE_TIME*1000));
+            timer.schedule(this, UPDATE_TIME * 1000);
+        }
+    }
+
+    public int getTimeLeft()
+    {
+        return timeLeft;
+    }
+
+    public void setTimeLeft(int timeLeft)
+    {
+        this.timeLeft = timeLeft;
     }
 
     public boolean isActive()
