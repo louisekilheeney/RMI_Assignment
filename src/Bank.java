@@ -7,13 +7,14 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class Bank implements BankInterface {
-    private List<Account> accounts; // users accounts
+    private List<Account> accounts;
     private List<Session> sessions;
 
     public Bank() throws RemoteException
     {
-        super();    // call the parent constructor
+        super();
 
+        // Sample accounts
         Account[] sampleAccounts = {
                 new Account(123, "jeshaugh", "airplane45"),
                 new Account(456, "ciaherne", "bluesky36"),
@@ -22,61 +23,55 @@ public class Bank implements BankInterface {
         };
 
         accounts = new ArrayList<>();
-        sessions = new ArrayList<>();
         Collections.addAll(accounts, sampleAccounts);
+
+        sessions = new ArrayList<>();
     }
 
-
-    /**
-     * Main method for the Bank server
-     *
-     * @param args
-     * @throws Exception
-     */
     public static void main(String args[]) throws Exception
     {
-        // initialise Bank server - see sample code in the notes and online RMI tutorials for details
         try {
-            // First reset our Security manager
+            // Set security manager
             if (System.getSecurityManager() == null) {
                 System.setSecurityManager(new SecurityManager());
                 System.out.println("Security manager set");
             }
 
-            // Create an instance of the local object
+            // Create an instance of the bank server and export it
             BankInterface bank = new Bank();
             System.out.println("Instance of the Bank server created");
             BankInterface stub = (BankInterface) UnicastRemoteObject.exportObject(bank, 0);
 
-            // Put the server object into the Registry
+            // Bind the bank server to the registry
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind("Bank", stub);
             System.out.println("Name rebind completed");
             System.out.println("Server ready for requests!");
-        } catch (Exception exc) {
-            System.out.println("Error in main - " + exc.toString());
+        } catch (Exception e) {
+            System.out.println("Bank server error: " + e.getMessage());
         }
     }
 
     @Override
     public long login(String username, String password) throws RemoteException, InvalidLogin
     {
-        String message = "Username not found";
-
+        // Iterate through the accounts
         for (Account account : accounts) {
+            // Check if the username is there
             if (username.compareTo(account.getUsername()) == 0) {
+                // Check if the password matches
                 if (password.compareTo(account.getPassword()) == 0) {
+                    // Create a new session and return the session ID
                     Session session = new Session(account);
                     sessions.add(session);
                     return session.getId();
                 } else {
-                    message = "Incorrect password";
-                    throw new InvalidLogin(message);
+                    throw new InvalidLogin("Incorrect password");
                 }
             }
         }
 
-        throw new InvalidLogin(message);
+        throw new InvalidLogin("Username not found");
     }
 
     @Override
@@ -86,14 +81,15 @@ public class Bank implements BankInterface {
         currentAccount.deposit(amount);
     }
 
-    private Account getAssociatedAccount(int accountnum, long sessionID) throws InvalidSession {
+    private Account getAssociatedAccount(int accountnum, long sessionID) throws InvalidSession
+    {
         // Check does the session exist
         for (Session session : sessions) {
             if (session.getId() == sessionID) {
                 // Check is the session active
-                if(session.isActive()) {
+                if (session.isActive()) {
                     // Check does the account number match
-                    if(session.getAccount().getAccountNumber() == accountnum) {
+                    if (session.getAccount().getAccountNumber() == accountnum) {
                         return session.getAccount();
                     } else {
                         throw new InvalidSession("Incorrect account number");
@@ -130,7 +126,8 @@ public class Bank implements BankInterface {
     }
 
     @Override
-    public int getAccountNumber(long sessionID) throws RemoteException{
+    public int getAccountNumber(long sessionID) throws RemoteException
+    {
         for (Session session : sessions) {
             if (session.getId() == sessionID) {
                 // Check is the session active
@@ -143,5 +140,4 @@ public class Bank implements BankInterface {
 
         return -1;
     }
-
 }

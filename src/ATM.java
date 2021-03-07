@@ -1,54 +1,55 @@
-
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ATM {
-
-    public static void main(String args[]) throws Exception {
-
-        int registryport = 20345;
-        //BankInterface bankServer;
-        ATM atm = null;
-        Long _sessionId = null;
-
-        if (args.length > 0){
-            registryport = Integer.parseInt(args[0]);
-        }
-
-        System.out.println("RMI_assignment port = " + registryport);
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-            System.out.println("Security manager set");
-        }
-        try {
-            Registry registry = LocateRegistry.getRegistry(null);
-            String name = "Bank";
-            BankInterface bankServer = (BankInterface) registry.lookup(name);
-
-            atm = new ATM(bankServer);
-        } catch (Exception e) {
-            System.err.println("ATM exception: " +e.toString());
-            e.printStackTrace();
-        }
-        while(true){
-            atm.login();
-            atm.atmActions();
-        }
-
-    }
-
     private long sessionId;
     private BankInterface bankServer;
     private Scanner sc;
     private int accNumber;
 
-    public ATM(BankInterface _bankServer) {
+    public static void main(String args[]) throws Exception
+    {
+        int registryport = 20345;
+        ATM atm = null;
+
+        // If a registry port was specified in the arguments
+        if (args.length > 0) {
+            registryport = Integer.parseInt(args[0]);
+        }
+
+        System.out.println("RMI_assignment port = " + registryport);
+
+        // Set security manager
+        if (System.getSecurityManager() == null) {
+            System.setSecurityManager(new SecurityManager());
+            System.out.println("Security manager set");
+        }
+
+        // Locate the Bank server in the registry
+        try {
+            Registry registry = LocateRegistry.getRegistry(null);
+            String name = "Bank";
+            BankInterface bankServer = (BankInterface) registry.lookup(name);
+            atm = new ATM(bankServer);
+        } catch (Exception e) {
+            System.err.println("ATM exception: " + e.toString());
+            e.printStackTrace();
+        }
+
+        // Start the ATM UI
+        while (true) {
+            atm.login();
+            atm.atmActions();
+        }
+    }
+
+    public ATM(BankInterface _bankServer)
+    {
         this.bankServer = _bankServer;
         this.sc = new Scanner(System.in);
         this.accNumber = -1;
@@ -57,7 +58,7 @@ public class ATM {
 
     public void login()
     {
-        while(sessionId == -1L){
+        while (sessionId == -1L) {
             System.out.println("Login to access Account: Please Enter Username: ");
             String username = this.sc.next();
             System.out.println("Please Enter Password: ");
@@ -72,21 +73,15 @@ public class ATM {
         }
         try {
             this.accNumber = bankServer.getAccountNumber(this.sessionId);
-            this.sessionId = sessionId;
-        }
-        catch(RemoteException e)
-        {
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    private void logout(){
-        this.sessionId = -1L;
-    }
-
-    private void atmActions() {
+    private void atmActions()
+    {
         boolean logout = false;
-        while(!logout) {
+        while (!logout) {
             System.out.println("Choose from the following options: ");
             System.out.println(" W)ithdraw, D)eposit, B)alance, S)tatement or L)ogout ");
             String option = this.sc.next();
@@ -121,8 +116,8 @@ public class ATM {
         }
     }
 
-
-    private void withdraw() {
+    private void withdraw()
+    {
         try {
             System.out.println("Enter amount to withdraw: ");
             String amountStr = this.sc.next();
@@ -138,7 +133,8 @@ public class ATM {
         }
     }
 
-    private void deposit() {
+    private void deposit()
+    {
         try {
             System.out.println("Please Enter deposit account: ");
             String depositStr = this.sc.next();
@@ -154,10 +150,11 @@ public class ATM {
         }
     }
 
-    private void balance() {
+    private void balance()
+    {
         try {
             BigDecimal balance = bankServer.getBalance(this.accNumber, this.sessionId);
-            System.out.println("The current balance of account " + this.accNumber + " is " + balance.toString()+ "Euro");
+            System.out.println("The current balance of account " + this.accNumber + " is " + balance.toString() + "Euro");
         } catch (InvalidSession | RemoteException e) {
             System.out.println(e.getMessage());
             System.out.println("Returning to main menu");
@@ -165,15 +162,16 @@ public class ATM {
         }
     }
 
-    private void statement() {
+    private void statement()
+    {
         try {
 
             System.out.println("Please Enter startDate: ");
             String startDate = this.sc.next();
-            Date start=new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+            Date start = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
             System.out.print("Please Enter endDate: ");
             String endDate = sc.next();
-            Date end=new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+            Date end = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
 
             Statement statement = bankServer.getStatement(this.accNumber, start, end, this.sessionId);
             System.out.println("The statement for account" + this.accNumber + " for the period " + start + " to " + end);

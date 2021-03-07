@@ -5,18 +5,25 @@ public class Session {
     private long id;
     private Timer timer;
     private Account account;
-    private static final int SESSION_LENGTH = 300;
+    private static final int SESSION_LENGTH = 300; // This is the number of seconds the session should last
     private boolean isActive;
 
     public Session(Account account)
     {
+        // Associate the account with this session
         setAccount(account);
+
+        // Create a random ID
         setId((long) Math.random());
+
+        // Create a new timer with the specified session length
+        // (* 1000 because the argument is in ms rather than seconds)
         timer = new Timer();
         setActive(true);
         timer.schedule(new EndSessionTask(), SESSION_LENGTH * 1000);
     }
 
+    // This task is called when the timer ends
     class EndSessionTask extends TimerTask {
         @Override
         public void run()
@@ -54,15 +61,5 @@ public class Session {
     public void setAccount(Account account)
     {
         this.account = account;
-    }
-
-    public Timer getTimer()
-    {
-        return timer;
-    }
-
-    public void setTimer(Timer timer)
-    {
-        this.timer = timer;
     }
 }
