@@ -93,8 +93,8 @@ public class Bank implements BankInterface {
         currentAccount.deposit(amount);
         System.out.println("Deposit to account " + accountnum + ":"
                 + "\nAmount: €" + amount
-                + "Balance: €" + currentAccount.getBalance()
-                + "Session time left: " + currentSession.getTimeLeft() + " s"
+                + "\nBalance: €" + currentAccount.getBalance()
+                + "\nSession time left: " + currentSession.getTimeLeft() + " s"
         );
     }
 
@@ -112,6 +112,7 @@ public class Bank implements BankInterface {
                         throw new InvalidSession("Incorrect account number");
                     }
                 } else {
+                    System.out.println("Session timed out");
                     throw new InvalidSession("Session timed out");
                 }
             }
@@ -129,8 +130,8 @@ public class Bank implements BankInterface {
         currentAccount.withdraw(amount);
         System.out.println("Withdrawal from account " + accountnum + ":"
                 + "\nAmount: €" + amount
-                + "Balance: €" + currentAccount.getBalance()
-                + "Session time left: " + currentSession.getTimeLeft() + " s"
+                + "\nBalance: €" + currentAccount.getBalance()
+                + "\nSession time left: " + currentSession.getTimeLeft() + " s"
         );
     }
 
@@ -140,8 +141,8 @@ public class Bank implements BankInterface {
         Session currentSession = getAssociatedSession(accountnum, sessionID);
         Account currentAccount = currentSession.getAccount();
         System.out.println("Balance request for account " + accountnum + ":"
-                + "Balance: €" + currentAccount.getBalance()
-                + "Session time left: " + currentSession.getTimeLeft() + " s"
+                + "\nBalance: €" + currentAccount.getBalance()
+                + "\nSession time left: " + currentSession.getTimeLeft() + " s"
         );
         return currentAccount.getBalance();
     }
@@ -152,9 +153,9 @@ public class Bank implements BankInterface {
         Session currentSession = getAssociatedSession(accountnum, sessionID);
         Account currentAccount = currentSession.getAccount();
         System.out.println("Statement request for account " + accountnum + ":"
-                + "From: " + from
-                + "To: " + to
-                + "Session time left: " + currentSession.getTimeLeft() + " s"
+                + "\nFrom: " + from
+                + "\nTo: " + to
+                + "\nSession time left: " + currentSession.getTimeLeft() + " s"
         );
         return new AccountStatement(from, to, currentAccount);
     }

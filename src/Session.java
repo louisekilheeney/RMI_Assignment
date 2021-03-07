@@ -23,7 +23,7 @@ public class Session {
         // (* 1000 because the argument is in ms rather than seconds)
         timer = new Timer();
         setActive(true);
-        setTimeLeft(SESSION_LENGTH * 1000);
+        setTimeLeft(SESSION_LENGTH);
         timer.schedule(new EndSessionTask(), SESSION_LENGTH * 1000);
         timer.schedule(new UpdateTimeLeftTask(), UPDATE_TIME * 1000);
     }
@@ -42,8 +42,8 @@ public class Session {
         @Override
         public void run()
         {
-            setTimeLeft(timeLeft - (UPDATE_TIME * 1000));
-            timer.schedule(this, UPDATE_TIME * 1000);
+            setTimeLeft(timeLeft - (UPDATE_TIME));
+            timer.schedule(new UpdateTimeLeftTask(), UPDATE_TIME * 1000);
         }
     }
 
