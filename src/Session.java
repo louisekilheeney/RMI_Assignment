@@ -7,6 +7,7 @@ public class Session {
     private Account account;
     private static final int SESSION_LENGTH = 300; // This is the number of seconds the session should last
     private static final int UPDATE_TIME = 10; // This is the number of seconds between updates to time left
+    private static final long[] SESSION_ID_RANGE = { 1L, 1000L };
     private boolean isActive;
     private int timeLeft;
 
@@ -16,7 +17,7 @@ public class Session {
         setAccount(account);
 
         // Create a random ID
-        setId((long) Math.random());
+        setId(SESSION_ID_RANGE[0] + (long) (Math.random() * (SESSION_ID_RANGE[1] - SESSION_ID_RANGE[0])));
 
         // Create a new timer with the specified session length
         // (* 1000 because the argument is in ms rather than seconds)
@@ -41,7 +42,7 @@ public class Session {
         @Override
         public void run()
         {
-            setTimeLeft(timeLeft-(UPDATE_TIME*1000));
+            setTimeLeft(timeLeft - (UPDATE_TIME * 1000));
             timer.schedule(this, UPDATE_TIME * 1000);
         }
     }
